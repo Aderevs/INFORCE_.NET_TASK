@@ -4,10 +4,13 @@ namespace INFORCE_.NET_TASK.Server.DbLogic
 {
     public class ShortenedUrl
     {
+        public Guid Id { get; set; }
+
         [Required]
         public string OriginalUrl {  get; set; }
 
-        [Key]
+        [Required]
+        [MaxLength(50)]
         public string ShortUrl { get; set; }
 
         [Required]

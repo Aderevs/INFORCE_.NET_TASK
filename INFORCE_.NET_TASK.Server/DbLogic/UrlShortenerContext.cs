@@ -17,9 +17,19 @@ namespace INFORCE_.NET_TASK.Server.DbLogic
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ShortenedUrl>()
+                .HasIndex(su => su.OriginalUrl)
+                .IsUnique();
+            
+            modelBuilder.Entity<ShortenedUrl>()
+                .HasIndex(su => su.ShortUrl)
+                .IsUnique();
+
+
+            modelBuilder.Entity<ShortenedUrl>()
                  .HasOne(us => us.User)
                  .WithMany(u => u.Urls)
                  .HasForeignKey(us => us.UserId);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

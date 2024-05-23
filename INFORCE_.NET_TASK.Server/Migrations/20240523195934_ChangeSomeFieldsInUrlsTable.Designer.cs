@@ -4,6 +4,7 @@ using INFORCE_.NET_TASK.Server.DbLogic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace INFORCE_.NET_TASK.Server.Migrations
 {
     [DbContext(typeof(UrlShortenerContext))]
-    partial class UrlShortenerContextModelSnapshot : ModelSnapshot
+    [Migration("20240523195934_ChangeSomeFieldsInUrlsTable")]
+    partial class ChangeSomeFieldsInUrlsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace INFORCE_.NET_TASK.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Urls", (string)null);
+                    b.ToTable("Urls");
                 });
 
             modelBuilder.Entity("INFORCE_.NET_TASK.Server.DbLogic.User", b =>
@@ -78,7 +81,7 @@ namespace INFORCE_.NET_TASK.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("INFORCE_.NET_TASK.Server.DbLogic.ShortenedUrl", b =>

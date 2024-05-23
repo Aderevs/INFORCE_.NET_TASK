@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using INFORCE_.NET_TASK.Server.DbLogic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,26 +30,38 @@ namespace INFORCE_.NET_TASK.Server.Account
         }
 
         [HttpPost("CreateShortenedUrl")]
+        [Authorize]
         public async Task<IActionResult> CreateUrl([FromBody] ShortenedUrlDTO urlDto)
         {
             if (!Uri.IsWellFormedUriString(urlDto.OriginalUrl, UriKind.Absolute))
             {
                 return BadRequest("Invalid URL");
             }
-            bool ifUrlAlreadyExists;
+            var urlAlreadyExists = await _context.Urls
+                .AnyAsync(u=>u.OriginalUrl== urlDto.OriginalUrl);
+            if(urlAlreadyExists)
+            {
+                return BadRequest(
+                    new
+                    {
+                        error = "Shortened url for this url already exists"
+                    });
+            }
+            bool ifShortUrlAlreadyExists;
             string shortUrl;
             do
             {
                 shortUrl = GenerateShortUrl();
-                ifUrlAlreadyExists = await _context.Urls
+                ifShortUrlAlreadyExists = await _context.Urls
                     .AnyAsync(u => u.ShortUrl == shortUrl);
-            } while (ifUrlAlreadyExists);
+            } while (ifShortUrlAlreadyExists);
             urlDto.ShortedUrl = shortUrl;
             var url = _mapper.Map<ShortenedUrl>(urlDto);
             _context.Urls.Add(url);
             await _context.SaveChangesAsync();
             return Ok(urlDto);
         }
+
         [HttpGet("{shortUrl}")]
         public async Task<IActionResult> GetOriginalUrl(string shortUrl)
         {
@@ -61,6 +74,22 @@ namespace INFORCE_.NET_TASK.Server.Account
             return NotFound("URL not found");
         }
 
+        [Authorize]
+        [HttpGet("GetUrl/{id}")]
+        public async Task<IActionResult> GetCertainUrl(Guid id)
+        {
+            var urlOrNull = await _context.Urls
+                .FirstOrDefaultAsync(u=>u.Id == id);
+            if(urlOrNull is ShortenedUrl url)
+            {
+                var urlDto = _mapper.Map<ShortenedUrlDTO>(url);
+                return Ok(urlDto);
+            }
+            else
+            {
+                return NotFound("URL with this identifier was not found");
+            }
+        }
 
         private string GenerateShortUrl()
         {
