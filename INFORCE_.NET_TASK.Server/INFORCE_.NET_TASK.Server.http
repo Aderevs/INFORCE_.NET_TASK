@@ -1,0 +1,6 @@
+@INFORCE_.NET_TASK.Server_HostAddress = http://localhost:5031
+
+GET {{INFORCE_.NET_TASK.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
