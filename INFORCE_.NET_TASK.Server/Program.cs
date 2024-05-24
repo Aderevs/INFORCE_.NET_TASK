@@ -26,7 +26,18 @@ namespace INFORCE_.NET_TASK.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-               .AddCookie();
+               .AddCookie(options =>
+               {
+                   options.Events = new CookieAuthenticationEvents
+                   {
+                       OnRedirectToLogin = context =>
+                       {
+                           // Suppress the redirect and return 401 status code instead
+                           context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                           return Task.CompletedTask;
+                       }
+                   };
+               });
             var app = builder.Build();
 
             app.UseDefaultFiles();

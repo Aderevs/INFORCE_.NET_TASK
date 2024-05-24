@@ -90,6 +90,9 @@ export class AllComponent implements OnInit {
     this.addUrl(value).subscribe(
       response => {
         console.log('url successfully added');
+        let newUrl:ShortenedUrl = response;
+        newUrl.showDeleteButton = true;
+        
         this.allUrls.push(response);
       },
       error => {
@@ -106,7 +109,24 @@ export class AllComponent implements OnInit {
     return this.http.post<any>(apiUrl, data);
   }
 
-  OnUrlDelete(){
-    
+  OnUrlDelete(event: Event, urlId: string): void {
+    event.preventDefault();
+    this.http.delete('/api/url/deleteUrl/' + urlId).subscribe(
+      response => {
+        console.log('url successfully deleted', response);
+        console.log('urls before', this.allUrls);
+        console.log('id', urlId);
+
+        const index = this.allUrls.findIndex(url => url.id === urlId);
+
+        if (index !== -1) {
+          this.allUrls.splice(index, 1);
+        }
+        console.log('urls after', this.allUrls);
+      },
+      error => {
+        console.log('error while deleting url', error);
+      }
+    )
   }
 }

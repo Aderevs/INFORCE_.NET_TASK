@@ -13,8 +13,8 @@
             <td>{{ url.shortUrl }}</td>
             <td *ngIf="url.showDeleteButton">
                 <form>
-                    <input type="hidden" name="urlId" value="{{url.id}}">
-                    <input (click)="OnUrlDelete()" type="submit" value="Delete url">
+                    <input type="hidden" name="urlId" [value]="url.id">
+                    <input (click)="OnUrlDelete($event, url.id)" type="submit" value="Delete url">
                 </form>
             </td>
         </tr>
