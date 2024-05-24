@@ -48,7 +48,7 @@ export class AllComponent implements OnInit {
           input.type = "text";
           input.name = "originalUrl";
           input.placeholder = "enter your url";
-          
+
 
           let hiddenTime = document.createElement("input");
           hiddenTime.type = "hidden";
@@ -59,7 +59,8 @@ export class AllComponent implements OnInit {
 
           let submitButton = document.createElement("button");
           submitButton.type = "submit";
-          submitButton.textContent = "Submit";
+          submitButton.textContent = "Create";
+          submitButton.className = 'btn btn-secondary';
 
           form.appendChild(input);
           form.appendChild(hiddenTime);

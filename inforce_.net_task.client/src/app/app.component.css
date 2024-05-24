@@ -20,3 +20,13 @@ th, td {
 table {
     margin: 0 auto;
 }
+ul {
+    list-style-type: none; /* Removes bullet points */
+    padding-left: 0;
+}
+nav div ul{
+    display: flex;
+}
+nav div ul li{
+    margin-left: 15px;
+}

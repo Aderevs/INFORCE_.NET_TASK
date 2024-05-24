@@ -1,26 +1,35 @@
+<div class="col-md-4">
+
 <form [formGroup]="loginForm">
     <fieldset>
         <legend>Login</legend>
+        <div class="form-group">
+
         <label for="login">Login</label>
+        <br>
         <input [formControlName]="'login'" type="text" id="login" >
         
         <div *ngIf="loginForm.get('login')?.touched && loginForm.get('login')?.invalid" class="invalid-feedback">
             <div *ngIf="loginForm.get('login')?.errors?.['required']">Login is required</div>
         </div>
+        </div>
         <br>
 
+        <div class="form-group">
 
         <label for="password">Password</label>
+        <br>
         <input [formControlName]="'password'" type="password" id="password" >
 
         <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="invalid-feedback">
             <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</div>
             <div *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</div>
         </div>
+        </div>
         <br>
 
 
-        <input (click)="OnSubmit()" [disabled]="loginForm.invalid" type="submit"value="Submit">
+        <input (click)="OnSubmit()" [disabled]="loginForm.invalid" type="submit"value="LogIn" class="btn btn-primary">
     </fieldset>
 </form>
-<div id="login-error-container"></div>
+<div id="login-error-container" class="text-danger"></div>

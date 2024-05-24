@@ -17,7 +17,7 @@
             <td class="table-row" *ngIf="url.showDeleteButton">
                 <form>
                     <input type="hidden" name="urlId" [value]="url.id">
-                    <input (click)="OnUrlDelete($event, url.id)" type="submit" value="Delete url">
+                    <input (click)="OnUrlDelete($event, url.id)" type="submit" value="Delete url" class="btn btn-danger">
                 </form>
             </td>
         </tr>
@@ -25,4 +25,4 @@
 </table>
 
 <div id="form-container"></div>
-<div id="new-url-error-container"></div>
+<div id="new-url-error-container" class="text-danger"></div>
