@@ -4,6 +4,7 @@ import { mustMatch } from './customValidator';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -14,7 +15,7 @@ import { AuthService } from '../../auth.service';
 
 export class RegisterComponent {
   registerForm: FormGroup;
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
     this.registerForm = new FormGroup({
       login: new FormControl('', Validators.required),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
@@ -29,10 +30,14 @@ export class RegisterComponent {
       response => {
         this.authService.login(response);
         console.log('Registration successful', response);
-        console.log(this.authService.userLogin);
+        this.router.navigate(['/urls/all']);
       },
       error => {
         console.error('Registration error', error);
+        let containerDiv = document.getElementById('registration-error-container');
+        if (containerDiv != null) {
+          containerDiv.textContent = error.error.error;
+        }
       }
     );
   }

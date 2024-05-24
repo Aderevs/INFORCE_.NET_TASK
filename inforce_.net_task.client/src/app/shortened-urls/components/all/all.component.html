@@ -11,9 +11,15 @@
         <tr *ngFor="let url of allUrls">
             <td>{{ url.originalUrl }}</td>
             <td>{{ url.shortUrl }}</td>
+            <td *ngIf="url.showDeleteButton">
+                <form>
+                    <input type="hidden" name="urlId" value="{{url.id}}">
+                    <input (click)="OnUrlDelete()" type="submit" value="Delete url">
+                </form>
+            </td>
         </tr>
     </tbody>
 </table>
 
 <div id="form-container"></div>
-<div id="error-container"></div>
+<div id="new-url-error-container"></div>

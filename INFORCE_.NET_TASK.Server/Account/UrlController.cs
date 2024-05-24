@@ -69,12 +69,8 @@ namespace INFORCE_.NET_TASK.Server.Account
             }
             var url = _mapper.Map<ShortenedUrl>(urlDto);
 
-
-            ///////////////////////////////////////////////////////////////////
-            url.UserId = new Guid("66D62DF8-DC27-4E7E-968E-6E2B7D250B9D");
-            //////////////////////////////////////////////////////////////////
-
-
+            url.User = await _context.Users.FirstAsync(u => u.Login == User.Identity.Name);
+            url.UserId = url.User.Id;
 
             _context.Urls.Add(url);
             await _context.SaveChangesAsync();
@@ -108,6 +104,48 @@ namespace INFORCE_.NET_TASK.Server.Account
             {
                 return NotFound("URL with this identifier was not found");
             }
+        }
+
+        [Authorize]
+        [HttpDelete("DeleteUrl/{id}")]
+        public async Task<IActionResult> DeleteUrl(Guid id)
+        {
+            bool hasPermission = false;
+            var urlOrNull = await _context.Urls
+                    .Include(u => u.User)
+                    .FirstOrDefaultAsync(u => u.Id == id);
+            if (urlOrNull is ShortenedUrl url)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    hasPermission = true;
+                }
+                else
+                {
+                    if (url.User.Login == User.Identity.Name)
+                    {
+                        hasPermission = true;
+                    }
+
+                }
+            }
+            else
+            {
+                return NotFound("No url with such id");
+            }
+            
+
+            if (hasPermission)
+            {
+                _context.Urls.Remove(url);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return Forbid("You do not have permission to perform this action");
+            }
+            
         }
 
         private string GenerateShortUrl()

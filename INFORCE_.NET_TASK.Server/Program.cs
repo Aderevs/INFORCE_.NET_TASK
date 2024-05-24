@@ -26,26 +26,13 @@ namespace INFORCE_.NET_TASK.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-               .AddCookie(/*options =>
-               {
-                   options.LoginPath = "/account/SignIn";
-               }*/);
-           /* builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.WithOrigins("https://localhost:4200")
-                           .AllowAnyHeader()
-                           .AllowAnyMethod();
-                });
-            });*/
+               .AddCookie();
             var app = builder.Build();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            //app.UseCors();
-
+            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

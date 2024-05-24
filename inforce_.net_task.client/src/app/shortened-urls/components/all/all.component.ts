@@ -7,6 +7,11 @@ interface ShortenedUrl {
   id: string;
   originalUrl: string;
   shortUrl: string;
+  showDeleteButton: boolean;
+  user: User;
+}
+interface User {
+  login: string;
 }
 
 @Component({
@@ -22,8 +27,20 @@ export class AllComponent implements OnInit {
     this.http.get<ShortenedUrl[]>('/api/url/GetAllUrls').subscribe(
       (result) => {
         this.allUrls = result;
-        console.log(this.authService.isLoggedIn());
+
         if (this.authService.isLoggedIn()) {
+          if (this.authService.isUserAdmin) {
+            this.allUrls.forEach(url => {
+              url.showDeleteButton = true;
+            });
+          } else {
+            this.allUrls.forEach(url => {
+              if (url.user.login === this.authService.userLogin) {
+                url.showDeleteButton = true;
+              }
+            });
+          }
+
           let containerDiv = document.getElementById('form-container');
           let form = document.createElement("form");
 
@@ -43,24 +60,21 @@ export class AllComponent implements OnInit {
           submitButton.type = "submit";
           submitButton.textContent = "Submit";
 
-          // Додавання поля вводу та кнопки до форми
           form.appendChild(input);
           form.appendChild(hiddenTime);
           form.appendChild(submitButton);
 
           form.addEventListener('submit', (event) => {
-            event.preventDefault(); // Запобігає стандартній поведінці submit (перезавантаження сторінки)
+            event.preventDefault();
             let formValues: any = {};
-            // Отримання всіх елементів input в формі
             const inputs = form.querySelectorAll('input');
-            // Проходження по кожному елементу input та додавання його значення в об'єкт formValues
+
             inputs.forEach((input: HTMLInputElement) => {
               formValues[input.name] = input.value;
             });
 
-            this.onSubmit(formValues); // Виклик методу з об'єктом значень форми
+            this.onSubmit(formValues);
           });
-          // Додавання форми всередину formContainer
           containerDiv?.appendChild(form);
         }
 
@@ -80,11 +94,19 @@ export class AllComponent implements OnInit {
       },
       error => {
         console.error("error during add url", error);
+        let containerDiv = document.getElementById('new-url-error-container');
+        if (containerDiv != null) {
+          containerDiv.textContent = error.error.error;
+        }
       }
     )
   }
   addUrl(data: any): Observable<any> {
     const apiUrl = '/api/url/CreateShortenedUrl';
     return this.http.post<any>(apiUrl, data);
+  }
+
+  OnUrlDelete(){
+    
   }
 }

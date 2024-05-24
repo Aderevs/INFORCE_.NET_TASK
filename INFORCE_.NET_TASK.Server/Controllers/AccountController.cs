@@ -34,7 +34,6 @@ namespace INFORCE_.NET_TASK.Server.Controllers
                 bool isLoginUnique = !await _context.Users.AnyAsync(u => u.Login == model.Login);
                 if (isLoginUnique)
                 {
-                    //var user = _mapper.Map<User>(model);
                     User user = new User
                     {
                         Id = Guid.NewGuid(),
