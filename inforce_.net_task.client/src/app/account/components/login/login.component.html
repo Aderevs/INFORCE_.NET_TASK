@@ -1,0 +1,25 @@
+<form [formGroup]="loginForm">
+    <fieldset>
+        <legend>Login</legend>
+        <label for="login">Login</label>
+        <input [formControlName]="'login'" type="text" id="login" >
+        
+        <div *ngIf="loginForm.get('login')?.touched && loginForm.get('login')?.invalid" class="invalid-feedback">
+            <div *ngIf="loginForm.get('login')?.errors?.['required']">Login is required</div>
+        </div>
+        <br>
+
+
+        <label for="password">Password</label>
+        <input [formControlName]="'password'" type="password" id="password" >
+
+        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="invalid-feedback">
+            <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</div>
+            <div *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</div>
+        </div>
+        <br>
+
+
+        <input (click)="OnSubmit()" [disabled]="loginForm.invalid" type="submit"value="Submit">
+    </fieldset>
+</form>

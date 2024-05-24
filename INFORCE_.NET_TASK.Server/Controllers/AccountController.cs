@@ -30,35 +30,45 @@ namespace INFORCE_.NET_TASK.Server.Controllers
             if (model.Password != null &&
                 model.Password == model.PasswordConfirm)
             {
-                return  BadRequest(
-                    new 
-                    { 
-                        error = "The password field is not filled in or does not match confirm password field. Please ensure that both the password and the confirmation password are identical"
-                    });
+
+                bool isLoginUnique = !await _context.Users.AnyAsync(u => u.Login == model.Login);
+                if (isLoginUnique)
+                {
+                    //var user = _mapper.Map<User>(model);
+                    User user = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        Salt = Guid.NewGuid(),
+                        Login= model.Login,
+                        IsAdmin = false
+                    };
+                    user.PasswordHash = PasswordHasher.HashPassword(model.Password+user.Salt.ToString());
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync();
+                    await SignInAsync(user);
+                    var userDto = _mapper.Map<UserDTO>(user);
+                    return Ok(userDto);
+                }
+                else
+                {
+                    return Conflict(
+                        new
+                        {
+                            error = "Chosen login is already in use"
+                        });
+                }
             }
-            bool isLoginUnique = !await _context.Users.AnyAsync(u=>u.Login == model.Login);
-            if (isLoginUnique)
-            {
-                var user = _mapper.Map<User>(model);
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-                await SignInAsync(user);
-                return Ok();
-            }
-            else
-            {
-                return Conflict(
+            return BadRequest(
                     new
                     {
-                        error = "Chosen login is already in use"
+                        error = "The password field is not filled in or does not match confirm password field. Please ensure that both the password and the confirmation password are identical"
                     });
-            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(AuthenticationModel model)
         {
-            if(model.Login != null)
+            if (model.Login == null)
             {
                 return BadRequest(
                     new
@@ -66,7 +76,7 @@ namespace INFORCE_.NET_TASK.Server.Controllers
                         error = "The login field is required to fill"
                     });
             }
-            if(model.Password != null)
+            if (model.Password == null)
             {
                 return BadRequest(
                     new
@@ -77,13 +87,14 @@ namespace INFORCE_.NET_TASK.Server.Controllers
 
             var userOrNull = await _context.Users
                 .FirstOrDefaultAsync(u => u.Login == model.Login);
-            if(userOrNull is User user)
+            if (userOrNull is User user)
             {
                 var isPasswordCorrect = PasswordHasher.IsCorrectPassword(user, model.Password);
                 if (isPasswordCorrect)
                 {
                     await SignInAsync(user);
-                    return Ok();
+                    var userDto = _mapper.Map<UserDTO>(user);
+                    return Ok(userDto);
                 }
             }
             return Unauthorized(

@@ -1,0 +1,36 @@
+<form [formGroup]="registerForm">
+    <fieldset>
+        <legend>Register</legend>
+        <label for="login">Login</label>
+        <input [formControlName]="'login'"  type="text" id="login" />
+
+        <div *ngIf="registerForm.get('login')?.touched && registerForm.get('login')?.invalid" class="invalid-feedback">
+            <div *ngIf="registerForm.get('login')?.errors?.['required']">Login is required</div>
+        </div>
+        <br>
+
+
+        <label for="password">Password</label>
+        <input [formControlName]="'password'" type="password" id="password" />
+
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="invalid-feedback">
+            <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+            <div *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</div>
+        </div>
+        <br>
+
+
+        <label for="passwordConfirm">PasswordConfirm</label>
+        <input [formControlName]="'passwordConfirm'" type="password" id="passwordConfirm" />
+        
+        <div *ngIf="registerForm.get('passwordConfirm')?.touched && registerForm.get('passwordConfirm')?.invalid" class="invalid-feedback">
+            <div *ngIf="registerForm.get('passwordConfirm')?.errors?.['required']">Confirm Password is required</div>
+            <div *ngIf="registerForm.get('passwordConfirm')?.errors?.['mustMatch']">Passwords must match</div>
+        </div>
+        <br>
+
+
+        <input (click)="OnSubmit()" [disabled]="registerForm.invalid" type="submit"value="Submit">
+    </fieldset>
+</form>
+

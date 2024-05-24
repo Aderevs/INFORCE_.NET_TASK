@@ -1,0 +1,19 @@
+<h3>AllUrls</h3>
+
+<table *ngIf="allUrls">
+    <thead>
+        <tr>
+            <th>Original URL</th>
+            <th>Short URL</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let url of allUrls">
+            <td>{{ url.originalUrl }}</td>
+            <td>{{ url.shortUrl }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div id="form-container"></div>
+<div id="error-container"></div>

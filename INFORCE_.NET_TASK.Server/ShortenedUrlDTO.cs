@@ -2,9 +2,9 @@
 {
     public class ShortenedUrlDTO
     {
-        Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string OriginalUrl { get; set; }
-        public string ShortedUrl { get; set; }
+        public string ShortUrl { get; set; }
         public DateOnly CreatedDate {  get; set; }
         public UserDTO User { get; set; }
     }

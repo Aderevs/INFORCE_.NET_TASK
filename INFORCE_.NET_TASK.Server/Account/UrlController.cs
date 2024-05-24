@@ -19,7 +19,7 @@ namespace INFORCE_.NET_TASK.Server.Account
             _mapper = mapper;
         }
 
-        [HttpGet(Name = "GetAllUrls")]
+        [HttpGet("GetAllUrls")]
         public async Task<IEnumerable<ShortenedUrlDTO>> Index()
         {
             var allUrls = await _context.Urls
@@ -31,15 +31,17 @@ namespace INFORCE_.NET_TASK.Server.Account
 
         [HttpPost("CreateShortenedUrl")]
         [Authorize]
-        public async Task<IActionResult> CreateUrl([FromBody] ShortenedUrlDTO urlDto)
+        public async Task<IActionResult> CreateUrl([FromBody] UrlModel model)
         {
+            ShortenedUrlDTO urlDto = _mapper.Map<ShortenedUrlDTO>(model);
+
             if (!Uri.IsWellFormedUriString(urlDto.OriginalUrl, UriKind.Absolute))
             {
                 return BadRequest("Invalid URL");
             }
             var urlAlreadyExists = await _context.Urls
-                .AnyAsync(u=>u.OriginalUrl== urlDto.OriginalUrl);
-            if(urlAlreadyExists)
+                .AnyAsync(u => u.OriginalUrl == urlDto.OriginalUrl);
+            if (urlAlreadyExists)
             {
                 return BadRequest(
                     new
@@ -55,8 +57,25 @@ namespace INFORCE_.NET_TASK.Server.Account
                 ifShortUrlAlreadyExists = await _context.Urls
                     .AnyAsync(u => u.ShortUrl == shortUrl);
             } while (ifShortUrlAlreadyExists);
-            urlDto.ShortedUrl = shortUrl;
+            urlDto.ShortUrl = shortUrl;
+            if (urlDto.Id == null)
+            {
+                urlDto.Id = Guid.NewGuid();
+            }
+            if (urlDto.CreatedDate == null)
+            {
+                var now = DateTime.Now;
+                urlDto.CreatedDate = new(now.Year, now.Month, now.Year);
+            }
             var url = _mapper.Map<ShortenedUrl>(urlDto);
+
+
+            ///////////////////////////////////////////////////////////////////
+            url.UserId = new Guid("66D62DF8-DC27-4E7E-968E-6E2B7D250B9D");
+            //////////////////////////////////////////////////////////////////
+
+
+
             _context.Urls.Add(url);
             await _context.SaveChangesAsync();
             return Ok(urlDto);
@@ -67,7 +86,7 @@ namespace INFORCE_.NET_TASK.Server.Account
         {
             var urlOrNull = await _context.Urls
                 .FirstOrDefaultAsync(u => u.ShortUrl == shortUrl);
-            if(urlOrNull is ShortenedUrl url)
+            if (urlOrNull is ShortenedUrl url)
             {
                 return Redirect(url.OriginalUrl);
             }
@@ -79,8 +98,8 @@ namespace INFORCE_.NET_TASK.Server.Account
         public async Task<IActionResult> GetCertainUrl(Guid id)
         {
             var urlOrNull = await _context.Urls
-                .FirstOrDefaultAsync(u=>u.Id == id);
-            if(urlOrNull is ShortenedUrl url)
+                .FirstOrDefaultAsync(u => u.Id == id);
+            if (urlOrNull is ShortenedUrl url)
             {
                 var urlDto = _mapper.Map<ShortenedUrlDTO>(url);
                 return Ok(urlDto);

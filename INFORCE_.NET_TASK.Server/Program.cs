@@ -30,11 +30,21 @@ namespace INFORCE_.NET_TASK.Server
                {
                    options.LoginPath = "/account/SignIn";
                }*/);
-
+           /* builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://localhost:4200")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });*/
             var app = builder.Build();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            //app.UseCors();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
