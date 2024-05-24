@@ -80,6 +80,7 @@ namespace INFORCE_.NET_TASK.Server.Account
         [HttpGet("{shortUrl}")]
         public async Task<IActionResult> GetOriginalUrl(string shortUrl)
         {
+            shortUrl = "https://localhost:7073/api/url/" + shortUrl;
             var urlOrNull = await _context.Urls
                 .FirstOrDefaultAsync(u => u.ShortUrl == shortUrl);
             if (urlOrNull is ShortenedUrl url)
@@ -150,7 +151,7 @@ namespace INFORCE_.NET_TASK.Server.Account
 
         private string GenerateShortUrl()
         {
-            return Guid.NewGuid().ToString().Substring(0, 8);
+            return "https://localhost:7073/api/url/" + Guid.NewGuid().ToString().Substring(0, 8);
         }
     }
 }

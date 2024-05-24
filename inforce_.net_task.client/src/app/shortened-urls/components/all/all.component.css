@@ -1,0 +1,8 @@
+.table-row{
+    /* margin-left: 50px; */
+    padding: 15px;
+    max-width: 500px;
+    overflow: hidden;
+        white-space: normal;
+        word-wrap: break-word; 
+}

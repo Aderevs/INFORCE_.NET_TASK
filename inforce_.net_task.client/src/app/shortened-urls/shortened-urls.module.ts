@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AllComponent } from './components/all/all.component';
 import { CertainComponent } from './components/certain/certain.component';
+import { RouterModule } from '@angular/router';
+
 
 
 
@@ -11,7 +13,8 @@ import { CertainComponent } from './components/certain/certain.component';
     CertainComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule
   ]
 })
 export class ShortenedUrlsModule { }

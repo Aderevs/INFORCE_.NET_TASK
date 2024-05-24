@@ -48,6 +48,7 @@ export class AllComponent implements OnInit {
           input.type = "text";
           input.name = "originalUrl";
           input.placeholder = "enter your url";
+          
 
           let hiddenTime = document.createElement("input");
           hiddenTime.type = "hidden";
