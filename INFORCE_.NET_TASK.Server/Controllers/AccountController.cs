@@ -17,7 +17,6 @@ namespace INFORCE_.NET_TASK.Server.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        //private readonly UrlShortenerContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
@@ -35,7 +34,6 @@ namespace INFORCE_.NET_TASK.Server.Controllers
                 model.Password == model.PasswordConfirm)
             {
 
-                //bool isLoginUnique = !await _context.Users.AnyAsync(u => u.Login == model.Login);
                 bool isLoginUnique = !await _userRepository.CheckIfExistsUserWithSuchLogin(model.Login);
                 if (isLoginUnique)
                 {
@@ -47,8 +45,6 @@ namespace INFORCE_.NET_TASK.Server.Controllers
                         IsAdmin = false
                     };
                     user.PasswordHash = PasswordHasher.HashPassword(model.Password+user.Salt.ToString());
-                    /*_context.Users.Add(user);
-                    await _context.SaveChangesAsync();*/
                     await _userRepository.AddAsync(user);
                     await SignInAsync(user);
                     var userDto = _mapper.Map<UserDTO>(user);
@@ -90,8 +86,6 @@ namespace INFORCE_.NET_TASK.Server.Controllers
                     });
             }
 
-            /*var userOrNull = await _context.Users
-                .FirstOrDefaultAsync(u => u.Login == model.Login);*/
             var userOrNull = await _userRepository.GetByLoginAsync(model.Login);
             if (userOrNull is User user)
             {
@@ -124,7 +118,6 @@ namespace INFORCE_.NET_TASK.Server.Controllers
             bool isLoggedIn = false;
             if (User?.Identity?.Name != null)
             {
-                //var user = await _context.Users.FirstAsync(u => u.Login == User.Identity.Name);
                 var user = await _userRepository.GetByLoginAsync(User.Identity.Name);
                 userDto = _mapper.Map<UserDTO>(user);
                 isLoggedIn = true;
