@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit() {
-    
+    this.checkIfAuthorized();
   }
 
   checkIfAuthorized(){
