@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using INFORCE_.NET_TASK.Server.Account;
 using INFORCE_.NET_TASK.Server.DbLogic;
+using INFORCE_.NET_TASK.Server.DTOs;
 
 namespace INFORCE_.NET_TASK.Server
 {

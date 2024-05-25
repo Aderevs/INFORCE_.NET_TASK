@@ -1,4 +1,4 @@
-﻿namespace INFORCE_.NET_TASK.Server
+﻿namespace INFORCE_.NET_TASK.Server.DTOs
 {
     public class UrlModel
     {

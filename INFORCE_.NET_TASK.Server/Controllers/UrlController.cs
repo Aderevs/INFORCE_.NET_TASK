@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using INFORCE_.NET_TASK.Server.DbLogic;
-using INFORCE_.NET_TASK.Server.Repositories;
+using INFORCE_.NET_TASK.Server.DTOs;
+using INFORCE_.NET_TASK.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

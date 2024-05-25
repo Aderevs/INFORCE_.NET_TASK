@@ -1,6 +1,6 @@
 ﻿using INFORCE_.NET_TASK.Server.DbLogic;
 
-namespace INFORCE_.NET_TASK.Server.Repositories
+namespace INFORCE_.NET_TASK.Server.Repositories.Interfaces
 {
     public interface IUrlRepository
     {

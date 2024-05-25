@@ -1,6 +1,7 @@
 
 using INFORCE_.NET_TASK.Server.DbLogic;
 using INFORCE_.NET_TASK.Server.Repositories;
+using INFORCE_.NET_TASK.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace INFORCE_.NET_TASK.Server

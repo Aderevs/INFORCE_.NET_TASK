@@ -1,4 +1,5 @@
 ﻿using INFORCE_.NET_TASK.Server.DbLogic;
+using INFORCE_.NET_TASK.Server.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace INFORCE_.NET_TASK.Server.Repositories
