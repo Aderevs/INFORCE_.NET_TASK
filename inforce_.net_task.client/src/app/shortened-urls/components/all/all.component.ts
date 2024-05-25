@@ -22,13 +22,14 @@ interface User {
 export class AllComponent implements OnInit {
   public allUrls: ShortenedUrl[] = [];
   constructor(private http: HttpClient, private authService: AuthService) { }
+  public isAuthorized:boolean = this.authService.isLoggedIn();
 
   ngOnInit(): void {
     this.http.get<ShortenedUrl[]>('/api/url/GetAllUrls').subscribe(
       (result) => {
         this.allUrls = result;
 
-        if (this.authService.isLoggedIn()) {
+        if (this.isAuthorized) {
           if (this.authService.isUserAdmin) {
             this.allUrls.forEach(url => {
               url.showDeleteButton = true;

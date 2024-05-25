@@ -109,6 +109,25 @@ namespace INFORCE_.NET_TASK.Server.Controllers
             await HttpContext.SignOutAsync();
             return Ok();
         }
+
+        [HttpGet("checkIfLoggedIn")]
+        public async Task<IActionResult> CheckIfLoggedIn()
+        {
+            UserDTO userDto = null;
+            bool isLoggedIn = false;
+            if (User?.Identity?.Name != null)
+            {
+                var user = await _context.Users.FirstAsync(u => u.Login == User.Identity.Name);
+                userDto = _mapper.Map<UserDTO>(user);
+                isLoggedIn = true;
+            }
+            return Ok(
+                new
+                {
+                    isLoggedIn = isLoggedIn,
+                    user = userDto
+                });
+        }
         private async Task SignInAsync(User user)
         {
             string role;

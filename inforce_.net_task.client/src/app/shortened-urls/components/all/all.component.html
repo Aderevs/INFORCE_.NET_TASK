@@ -11,7 +11,7 @@
         <tr *ngFor="let url of allUrls">
             <td class="table-row">{{ url.originalUrl }}</td>
             <td class="table-row">{{ url.shortUrl }}</td>
-            <td class="table-row">
+            <td class="table-row" *ngIf="isAuthorized">
                 <a routerLink="/urls/certain/{{url.id}}"> Details...</a>    
             </td>
             <td class="table-row" *ngIf="url.showDeleteButton">

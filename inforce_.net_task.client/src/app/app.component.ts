@@ -1,36 +1,39 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from './account/auth.service';
 
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
+interface User{
+  id:string;
+  login:string;
+  isAdmin:boolean;
 }
-
+interface ServerResponse{
+  isLoggedIn:boolean;
+  user:User;
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  public forecasts: WeatherForecast[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit() {
-    this.getForecasts();
+    
   }
 
-  getForecasts() {
-    this.http.get<WeatherForecast[]>('/weatherforecast').subscribe(
-      (result) => {
-        this.forecasts = result;
-      },
-      (error) => {
-        console.error(error);
+  checkIfAuthorized(){
+    this.http.get<ServerResponse>('/api/account/checkIfLoggedIn').subscribe(
+      response=>{
+        if(response.isLoggedIn){
+          this.authService.login(response.user);
+        }else{
+          this.authService.logout();
+        }
       }
-    );
+    )
   }
 
   title = 'inforce_.net_task.client';
