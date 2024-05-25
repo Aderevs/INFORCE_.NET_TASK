@@ -24,6 +24,9 @@ namespace INFORCE_.NET_TASK.Server.DbLogic
                 .HasIndex(su => su.ShortUrl)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Login)
+                .IsUnique();
 
             modelBuilder.Entity<ShortenedUrl>()
                  .HasOne(us => us.User)
