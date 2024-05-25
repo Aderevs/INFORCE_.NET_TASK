@@ -4,6 +4,8 @@ import { accountRoutes } from './account/routes';
 import { shortenedUrlsRoutes } from './shortened-urls/routes';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/default', pathMatch: 'full' },
+  { path: 'default', component: shortenedUrlsRoutes[0].component },
   ...accountRoutes,
   ...shortenedUrlsRoutes
 ];

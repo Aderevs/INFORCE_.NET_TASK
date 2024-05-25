@@ -1,30 +1,35 @@
 ﻿using AutoMapper;
 using INFORCE_.NET_TASK.Server.DbLogic;
+using INFORCE_.NET_TASK.Server.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace INFORCE_.NET_TASK.Server.Account
+namespace INFORCE_.NET_TASK.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UrlController : ControllerBase
     {
-        private readonly UrlShortenerContext _context;
+        //private readonly UrlShortenerContext _context;
+        private readonly IUrlRepository _urlRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UrlController(UrlShortenerContext context, IMapper mapper)
+        public UrlController(IUrlRepository urlRepository, IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
+            _urlRepository = urlRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
         [HttpGet("GetAllUrls")]
         public async Task<IEnumerable<ShortenedUrlDTO>> Index()
         {
-            var allUrls = await _context.Urls
+            /*var allUrls = await _context.Urls
                 .Include(u => u.User)
-                .ToListAsync();
+                .ToListAsync();*/
+            var allUrls = await _urlRepository.GetAllIncludesUsersAsync();
             var allUrlsDto = _mapper.Map<List<ShortenedUrlDTO>>(allUrls);
             return allUrlsDto;
         }
@@ -39,8 +44,9 @@ namespace INFORCE_.NET_TASK.Server.Account
             {
                 return BadRequest("Invalid URL");
             }
-            var urlAlreadyExists = await _context.Urls
-                .AnyAsync(u => u.OriginalUrl == urlDto.OriginalUrl);
+            /* var urlAlreadyExists = await _context.Urls
+                 .AnyAsync(u => u.OriginalUrl == urlDto.OriginalUrl);*/
+            var urlAlreadyExists = await _urlRepository.CheckIfExistsSuchOriginalUrl(urlDto.OriginalUrl);
             if (urlAlreadyExists)
             {
                 return BadRequest(
@@ -54,8 +60,9 @@ namespace INFORCE_.NET_TASK.Server.Account
             do
             {
                 shortUrl = GenerateShortUrl();
-                ifShortUrlAlreadyExists = await _context.Urls
-                    .AnyAsync(u => u.ShortUrl == shortUrl);
+                /*ifShortUrlAlreadyExists = await _context.Urls
+                    .AnyAsync(u => u.ShortUrl == shortUrl);*/
+                ifShortUrlAlreadyExists = await _urlRepository.CheckIfExistsSuchShortUrl(shortUrl);
             } while (ifShortUrlAlreadyExists);
             urlDto.ShortUrl = shortUrl;
             if (urlDto.Id == null)
@@ -69,11 +76,13 @@ namespace INFORCE_.NET_TASK.Server.Account
             }
             var url = _mapper.Map<ShortenedUrl>(urlDto);
 
-            url.User = await _context.Users.FirstAsync(u => u.Login == User.Identity.Name);
+            //url.User = await _context.Users.FirstAsync(u => u.Login == User.Identity.Name);
+            url.User = await _userRepository.GetByLoginAsync(User.Identity.Name);
             url.UserId = url.User.Id;
 
-            _context.Urls.Add(url);
-            await _context.SaveChangesAsync();
+            /*_context.Urls.Add(url);
+            await _context.SaveChangesAsync();*/
+            await _urlRepository.AddAsync(url);
             return Ok(urlDto);
         }
 
@@ -81,8 +90,9 @@ namespace INFORCE_.NET_TASK.Server.Account
         public async Task<IActionResult> GetOriginalUrl(string shortUrl)
         {
             shortUrl = "https://localhost:7073/api/url/" + shortUrl;
-            var urlOrNull = await _context.Urls
-                .FirstOrDefaultAsync(u => u.ShortUrl == shortUrl);
+            /*var urlOrNull = await _context.Urls
+                .FirstOrDefaultAsync(u => u.ShortUrl == shortUrl);*/
+            var urlOrNull = await _urlRepository.GetByShortUrl(shortUrl);
             if (urlOrNull is ShortenedUrl url)
             {
                 return Redirect(url.OriginalUrl);
@@ -94,8 +104,9 @@ namespace INFORCE_.NET_TASK.Server.Account
         [HttpGet("GetUrl/{id}")]
         public async Task<IActionResult> GetCertainUrl(Guid id)
         {
-            var urlOrNull = await _context.Urls
-                .FirstOrDefaultAsync(u => u.Id == id);
+            /*var urlOrNull = await _context.Urls
+                .FirstOrDefaultAsync(u => u.Id == id);*/
+            var urlOrNull = await _urlRepository.GetByIdAsync(id);
             if (urlOrNull is ShortenedUrl url)
             {
                 var urlDto = _mapper.Map<ShortenedUrlDTO>(url);
@@ -112,9 +123,10 @@ namespace INFORCE_.NET_TASK.Server.Account
         public async Task<IActionResult> DeleteUrl(Guid id)
         {
             bool hasPermission = false;
-            var urlOrNull = await _context.Urls
+            /*var urlOrNull = await _context.Urls
                     .Include(u => u.User)
-                    .FirstOrDefaultAsync(u => u.Id == id);
+                    .FirstOrDefaultAsync(u => u.Id == id);*/
+            var urlOrNull = await _urlRepository.GetByIdIncludesUserAsync(id);
             if (urlOrNull is ShortenedUrl url)
             {
                 if (User.IsInRole("Admin"))
@@ -134,19 +146,20 @@ namespace INFORCE_.NET_TASK.Server.Account
             {
                 return NotFound("No url with such id");
             }
-            
+
 
             if (hasPermission)
             {
-                _context.Urls.Remove(url);
-                await _context.SaveChangesAsync();
+               /* _context.Urls.Remove(url);
+                await _context.SaveChangesAsync();*/
+               await _urlRepository.DeleteAsync(url);
                 return Ok();
             }
             else
             {
                 return Forbid("You do not have permission to perform this action");
             }
-            
+
         }
 
         private string GenerateShortUrl()
