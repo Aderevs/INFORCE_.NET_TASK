@@ -1,5 +1,6 @@
 
 using INFORCE_.NET_TASK.Server.DbLogic;
+using INFORCE_.NET_TASK.Server.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace INFORCE_.NET_TASK.Server
@@ -32,12 +33,14 @@ namespace INFORCE_.NET_TASK.Server
                    {
                        OnRedirectToLogin = context =>
                        {
-                           // Suppress the redirect and return 401 status code instead
                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                            return Task.CompletedTask;
                        }
                    };
                });
+            builder.Services.AddSingleton<IUserRepository, UserRepository>();
+            builder.Services.AddSingleton<IUrlRepository, UrlRepository>();
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
